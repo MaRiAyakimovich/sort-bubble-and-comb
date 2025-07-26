@@ -1,0 +1,55 @@
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+using namespace std;
+
+int main() {
+    setlocale(LC_ALL, "Russian");
+
+    //создаем неотсортированный массив
+    const int n = 100; //кол-во элементов массива(100, 1000, 10000, 100000)
+    int arr[n];
+
+    srand(time(0)); // инициализация генератора случайных чисел
+    // Генерация случайного массива
+    for (int i = 0; i < n; i++) {
+        arr[i] = rand() % 20001 - 10000; // от -10000 до 10000
+    }
+
+    clock_t start = clock();
+    int gap = n - 1; //начальный шаг - длина массива минус 1
+    float shrink = 1.3; //коэффициент уменьшения
+    bool sorted = false; //флаг для проверки сортировки
+
+    while (sorted == false) {
+        gap = int(gap / shrink); //уменьшаем шаг
+
+        if (gap <= 1) {
+            gap = 1; //последний проход
+            sorted = true; //предполагаем, что массив отсортирован
+        }
+
+        for (int i = 0; i + gap < n; i++) { //идем циклом с шагом gap
+
+            if (arr[i] > arr[i + gap]) { //проверка сравнения значений элементов с ша-гом gap
+                int temp = arr[i]; //временно сохраняем значение текущего элемента
+                arr[i] = arr[i + gap]; //в текущую ячейку записываем значение новой
+                arr[i + gap] = temp; //возвращаем старое значение из temp
+
+                //произошла перестановка двух элементов
+
+                sorted = false; //продолжаем сортировку повторно
+            }
+        }
+    }
+
+    clock_t end = clock();
+    double duration_ms = double(end - start) * 1000 / CLOCKS_PER_SEC;
+
+    cout << "Результат: ";
+    for (int i = 0; i < n; i++) //проход по отсортированному массиву
+        cout << arr[i] << " "; //выводим все элементы через пробел
+
+    cout << "\nВремя сортировки: " << duration_ms << " мс.\n";
+    return 0;
+}
